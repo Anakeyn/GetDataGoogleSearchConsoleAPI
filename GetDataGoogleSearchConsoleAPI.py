@@ -31,13 +31,9 @@ print(os.getcwd())  #verif
 
 
 ####### "Fourni" par Google #############################################
-#Ce code est un mélange entre le code exemple  pour Google Analytics API
-#https://developers.google.com/analytics/devguides/reporting/core/v4/quickstart/installed-py
-#Et le code exemple pour Google Search console :
-#https://developers.google.com/webmaster-tools/search-console-api-original/v3/quickstart/quickstart-python
 
 """Hello Search Console Reporting API V3."""
-#pour Google Analytics API uniquement
+
 import argparse
 from apiclient.discovery import build
 import httplib2
@@ -50,10 +46,15 @@ from oauth2client import tools
 SCOPES = ['https://www.googleapis.com/auth/webmasters.readonly']
 DISCOVERY_URI = ('https://www.googleapis.com/discovery/v1/apis/customsearch/v1/rest')
 
+#les mauvais codes : utiliser les votres cela sont faux 
+#Pour méthode avec IDs
+MYCLIENTID="123456789-aaaaaaaaaaaaaaaaaaaaa.apps.googleusercontent.com"
+MYCLIENTSECRET="123456789aaaaaaaaaaaaaaaaaa"
+#pour méthode avec .json 
+CLIENT_SECRETS_PATH = 'client_secret_123456789-aaaaaaaaaaaaaaaaaaaaa.apps.googleusercontent.com.json' # Path to client_secrets.json file.
 
-#Le mauvais path : attention appeler ici votre fichier de codes .json pas celui-ci
-#de toute façon il est faux 
-CLIENT_SECRETS_PATH = 'client_secret_123456789-6m1ad34fr23ret.apps.googleusercontent.com.json' # Path to client_secrets.json file.
+
+
 
 
 # Parse command-line arguments.
@@ -62,10 +63,18 @@ parser = argparse.ArgumentParser(
     parents=[tools.argparser])
 flags = parser.parse_args([])
 
-# Set up a Flow object to be used if we need to authenticate.
+#Méthode 1
+# Créer un objet flow pour connection oAuth MYCLIENTID ou MYCLIENTSECRET
+flow = client.OAuth2WebServerFlow(client_id=MYCLIENTID,
+                           client_secret=MYCLIENTSECRET,
+                           scope=SCOPES)
+
+#Méthode 2
+# Créer un objet flow avec le fichier .json pour connection oAuth
 flow = client.flow_from_clientsecrets(
     CLIENT_SECRETS_PATH, scope=SCOPES,
     message=tools.message_if_missing(CLIENT_SECRETS_PATH))
+
 
 # Prepare credentials, and authorize HTTP object with them.
 # If the credentials don't exist or are invalid run through the native client
@@ -113,7 +122,7 @@ for site_url in verified_sites_urls:
 #préparation de la requête
 myStrDelai = "1M"  #1 mois
 #Finalement on prend les dates du mois de mai
-myStrStartDate = "2019-05-01"  #1er mail
+myStrStartDate = "2019-05-01"  #1er mai
 myStrEndDate = "2019-05-31" #31 mai
 
 mySiteUrl = "https://www.networking-morbihan.com/"
@@ -144,7 +153,7 @@ dfGSC.info()
 
 dfGSC.head(n=20)
 #on sauvegarde en csv pour voir ce qu'il y a dedans
-dfGSC.to_csv("dfGSC.csv", sep=";", index=False)  #séparateur ; 
+dfGSC.to_csv("dfGSC-MAI.csv", sep=";", index=False)  #séparateur ; 
 
 
 #On Sauvegarde en json pour la suite comme flat file (mieux que .csv)
